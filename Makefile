@@ -35,7 +35,7 @@ reset:
 		@echo "$(BOLD)$(R) Docker containers and volumes deleted!$(RESET)"
 
 debian: 
-		docker pull debian:bookworm
+		docker pull debian:bullseye
 
 re : reset up
 

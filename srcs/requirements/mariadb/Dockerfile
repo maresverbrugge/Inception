@@ -1,16 +1,17 @@
 # MariaDB Dockerfile
 
 # pull base image
-FROM debian:bookworm
+FROM debian:bullseye
 
 # update and upgrade the system
 RUN apt-get update && apt-get upgrade -y
 
-# # install the required packages
+# install the required packages
+# mariadb-server in its own container
 RUN apt-get install -y mariadb-server
 
 # copy file from host to container
-COPY ./mdb-conf.sh /mdb-conf.sh
+COPY ./tools/mdb-conf.sh /mdb-conf.sh
 
 # set permissions to the file
 RUN chmod +x /mdb-conf.sh
