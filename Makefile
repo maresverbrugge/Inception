@@ -38,17 +38,19 @@ up: build
 start:
 	docker-compose -f srcs/docker-compose.yml start
 
-# stop the containers
+# stop the running containers without removing them (sends SIGTERM)
+# gracefully cleaning up
 stop:
 	docker-compose -f srcs/docker-compose.yml stop
 
-# remove the containers and network
-down:
-	docker-compose -f srcs/docker-compose.yml down
-
-# kill the containers
+# immediately and forcecfully kill the running containers and network (sends SIGKILL)
+# without cleanup
 kill:
 	docker-compose -f srcs/docker-compose.yml kill
+
+# stop and remove the containers, network, volumes and images created by up
+down:
+	docker-compose -f srcs/docker-compose.yml down
 
 # clean and start the containers
 re: clean up
