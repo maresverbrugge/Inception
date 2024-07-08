@@ -10,16 +10,24 @@
 #                                                                              #
 # **************************************************************************** #
 
+WP_DATA = /home/mverbrug/data/wordpress
+DB_DATA = /home/mverbrug/data/mariadb
+
 LIST_CONTAINERS := $(shell docker ps -a -q)
+LIST_IMAGES := $(shell docker images -a -q)
 LIST_VOLUMES := $(shell docker volume ls -q)
+LIST_NETWORK := $(shell docker network ls -q)
 
 all: debian up
 
-up:
-		mkdir -p $(HOME)/data/mariadb
-		mkdir -p $(HOME)/data/wordpress
-		sudo docker-compose -f srcs/docker-compose.yml up --build
+up:		build
+		mkdir -p $(WP_DATA)
+		mkdir -p $(DB_DATA)
+		docker-compose -f srcs/docker-compose.yml up
 		@echo "$(BOLD)$(G) Docker containers now set up!$(RESET)"
+
+build:
+		docker-compose -f srcs/docker-compose.yml build
 
 stop:
 		docker-compose -f srcs/docker-compose.yml stop
@@ -29,9 +37,12 @@ kill:
 
 reset:
 		docker compose -f ./srcs/docker-compose.yml down
-		docker rm -f $(LIST_CONTAINERS)
-		docker volume rm -f $(LIST_VOLUMES)
-		rm -r $(HOME)/data
+		docker rm $(LIST_CONTAINERS) || true
+		docker rmi -f $(LIST_IMAGES) || true
+		docker volume rm -f $(LIST_VOLUMES) || true
+		docker network rm -f $(LIST_NETWORK) || true
+		rm -rf $(WP_DATA) || true
+		rm -rf $(DB_DATA) || true
 		@echo "$(BOLD)$(R) Docker containers and volumes deleted!$(RESET)"
 
 debian: 
