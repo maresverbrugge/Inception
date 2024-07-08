@@ -18,7 +18,6 @@ LIST_IMAGES := $(shell docker images -qa)
 LIST_VOLUMES := $(shell docker volume ls -q)
 LIST_NETWORK := $(shell docker network ls -q)
 
-# default target
 all: up
 
 # build or update the docker images reading from docker-compose.yml
@@ -29,8 +28,8 @@ build:
 # create the wordpress and mariadb data directories
 # start the containers in the background and leave them running
 up: build
-	@mkdir -p $(WP_DATA)
-	@mkdir -p $(DB_DATA)
+	@sudo mkdir -p $(WP_DATA)
+	@sudo mkdir -p $(DB_DATA)
 	docker-compose -f srcs/docker-compose.yml up -d
 	@echo "$(BOLD)$(G)Docker containers now set up!$(RESET)"
 
@@ -66,9 +65,9 @@ clean:
 	@docker rm $(LIST_CONTAINERS) || true
 	@docker rmi -f $(LIST_IMAGES) || true
 	@docker volume rm $(LIST_VOLUMES) || true
-	@docker network rm $(LIST_NETWORK) 2>/dev/null
-	@rm -rf $(WP_DATA) || true
-	@rm -rf $(DB_DATA) || true
+	@docker network rm $(LIST_NETWORK) || true
+	@sudo rm -rf $(WP_DATA) || true
+	@sudo rm -rf $(DB_DATA) || true
 	@echo "$(BOLD)$(R)Docker containers and volumes deleted!$(RESET)"
 
 #========================================#
