@@ -6,7 +6,7 @@
 #    By: mverbrug <mverbrug@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/01 12:22:35 by mverbrug          #+#    #+#              #
-#    Updated: 2024/07/01 15:53:44 by mverbrug         ###   ########.fr        #
+#    Updated: 2024/07/11 12:48:42 by mverbrug         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ LIST_NETWORK := $(shell docker network ls -q)
 # default target
 all: up
 
-# build the containers
+# build or update the docker images reading from docker-compose.yml
 build:
 	docker-compose -f srcs/docker-compose.yml build
 
@@ -59,23 +59,17 @@ re: clean up
 # stop all running containers and remove them.
 # remove all images, volumes and networks.
 # remove the wordpress and mariadb data directories.
-# the (|| true) is used to ignore the error 
+# the (|| true) is used so the Makefile doesn't exit when there's an error:
 # if there are no containers running to prevent the make command from stopping.
 clean: 
 	@docker stop $(LIST_CONTAINERS) || true
 	@docker rm $(LIST_CONTAINERS) || true
 	@docker rmi -f $(LIST_IMAGES) || true
-	@docker volume rm -f $(LIST_VOLUMES) || true
-	@docker network rm -f $(LIST_NETWORK) || true
+	@docker volume rm $(LIST_VOLUMES) || true
+	@docker network rm $(LIST_NETWORK) 2>/dev/null
 	@rm -rf $(WP_DATA) || true
 	@rm -rf $(DB_DATA) || true
 	@echo "$(BOLD)$(R)Docker containers and volumes deleted!$(RESET)"
-
-# prune the containers:
-# execute the clean target and remove all 
-# containers, images, volumes and networks from the system.
-prune: clean
-	docker system prune -a --volumes -f
 
 #========================================#
 #=============== COLOURS ================#
