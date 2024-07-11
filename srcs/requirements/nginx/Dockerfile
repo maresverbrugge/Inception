@@ -25,4 +25,5 @@ RUN mkdir -p /var/www/wordpress
 RUN chown -R www-data:www-data /var/www/wordpress
 
 # make nginx run in foreground to keep container alive
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx"]
+CMD ["-g", "daemon off;"]

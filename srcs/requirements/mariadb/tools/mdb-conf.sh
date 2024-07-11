@@ -14,6 +14,10 @@ mariadb -e "CREATE USER IF NOT EXISTS \`${MYSQL_USER}\`@'%' IDENTIFIED BY '${MYS
 # Grant privileges to user
 mariadb -e "GRANT ALL PRIVILEGES ON ${MYSQL_DB}.* TO \`${MYSQL_USER}\`@'%';"
 
+# Secure the root user with a new password
+mariadb -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
+mariadb -e "ALTER USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
+
 # Flush privileges to apply changes
 mariadb -e "FLUSH PRIVILEGES;"
 
@@ -21,5 +25,5 @@ mariadb -e "FLUSH PRIVILEGES;"
 # Shutdown mariadb to restart with new config
 mysqladmin -u root -p$MYSQL_ROOT_PASSWORD shutdown
 
-# Restart mariadb with new config in the background to keep the container running
+# Restart mariadb with new config in the foreground to keep the container running
 mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir='/var/lib/mysql'
